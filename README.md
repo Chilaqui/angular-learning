@@ -251,15 +251,155 @@ reciveMessage(mesagge: string){
   <p>Mensaje recibido en el padre: {{receivedMessage}}</p>
 </div>
 ```
+*Esto no va a andar por que en los modulo tienes que agregar FormModule*
+
+```typeScript
+ imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
+  ],
+```
 
 
 ## Servicios
 
+> El servicio es una clase de TypeScript que se utiliza para organizar y compartir logica, datos o funcionalidades comunes entre diferentes componentes de una aplicacion, los servicios son una parte fundamental de la arquitectura de angular y proporcionan una forma de la centralizar y reutilizar la logica que no esta relacionada directamente con la interfaz de usuario
+
+> * Reutilizacion: Logica compartida.
+> * Separacion de precupaciones: divide logica y UI
+> * Inyecccion de dependencias: Instancias porporcionadas
+> * Centralizacion de datos: Almacena y gestiona datos compartidos
+> * Comunicacion entre componentes: Facilita la comunicacion
+> * Lifecycle independiente: No vilcula vistas
+> * Resteabilidad: facil de probar
+
+*Como se genera un servicio*
+```bash
+ng generate service nombre-del-servicio
+
+ng g s nombre-del-servicio
+```
+*Estructura del servicio*
+```typeScript
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MiServicio {
+
+  costructor(){}
+
+  //Metdos y logica del servicio
+  
+}
+
+```
+*Documentación del Servicio Familiar - Angular*
+ *✅ Servicio: ServicioFamiliar*
+
+**Ubicación:** `src/app/servicio-familiar.ts`  
+**Decorador:** `@Injectable({ providedIn: 'root' })`
+
+*Propósito*
+>Es un servicio compartido entre componentes para mantener y manipular información de dos "hermanos": el mayor y el menor. Este servicio puede ser accedido desde cualquier componente de la aplicación, ya que está registrado en la raíz (`providedIn: 'root'`).
+
+*Contenido*
+
+*Propiedades*
+- **hermanoGrande** y **hermanoPequeno**: guardan los nombres como strings.
+- **Getters y setters**: permiten acceder y modificar los nombres de manera controlada.
+
+*Métodos*
+- **saludar(hermano: string)**: imprime un saludo en consola.
+- **preguntarPorHijo()**: retorna un mensaje tipo pregunta.
+
+> Este servicio permite compartir datos entre componentes sin que estén directamente conectados entre sí (programación desacoplada).
+
+---
+
+*🧩 Componente: Padre*
+
+**Ubicación:** `src/app/padre/padre.ts`
+
+*Propósito*
+>Este componente representa al hermano mayor. Se comunica con el servicio para establecer su propio nombre (Juan) y acceder a los datos del hermano pequeño.
+
+*Características clave*
+
+>Inyección del servicio de dos maneras:
+- Con `constructor(private _servicioFamiliar: ServicioFamiliar)`
+- Con `inject(ServicioFamiliar)` directamente en una variable (alternativa moderna).
+
+*En ngOnInit():*
+- Se asigna el nombre del hermano mayor usando el setter del servicio.
+- Se guarda ese nombre en una variable local del componente (`nombre`) para mostrarlo en la vista.
+
+*Métodos del componente:*
+- **saludar()**: usa el nombre del hermano pequeño desde el servicio para imprimir un saludo.
+- **preguntar()**: muestra en consola una pregunta genérica del servicio.
+
+> Este componente demuestra cómo acceder a métodos y propiedades de un servicio compartido desde un componente.
+
+---
+
+*🧩 Componente: Hermano*
+
+**Ubicación:** `src/app/hermano/hermano.ts`
+
+*Propósito*
+>Este componente representa al hermano pequeño. Funciona igual que el componente Padre, pero desde el otro lado: asigna y obtiene el nombre del hermano menor y accede al nombre del mayor.
+
+*Acciones realizadas en ngOnInit():*
+- Se establece su propio nombre como 'Pedro'.
+- Recupera su nombre desde el servicio para mostrarlo en la vista.
+
+*Métodos:*
+- **saludar()**: saluda al hermano mayor usando el servicio.
+- **preguntar()**: igual que en el componente Padre, imprime una pregunta.
+
+> Este componente complementa al Padre, usando el mismo servicio para compartir datos de manera bidireccional.
+
+---
+
+*🖼️ Plantilla HTML de ambos componentes*
+
+En ambos casos, el HTML sigue esta estructura:
+
+```html
+<h1>{{ nombre }}</h1>
+<button (click)="saludar()">Saludar</button>
+<button (click)="preguntar()">Preguntar por hijo</button>
+```
+
+Muestra el nombre del hermano, y tiene dos botones para invocar los métodos definidos en el componente (los cuales usan el servicio).
+
+---
+
+*Conclusión general*
+
+Se ha creado un servicio centralizado (`ServicioFamiliar`) que gestiona el estado compartido entre dos componentes (`Padre` y `Hermano`). Angular inyecta este servicio automáticamente por estar marcado como `providedIn: 'root'`, y se usa para comunicar datos entre componentes sin depender uno del otro directamente.
+
+**Este patrón es clave en Angular para mantener aplicaciones organizadas, reutilizables y escalables.**
+
+
 ## Dependencias
+>Son los recursos externos y modulos de odigo que un aplicacion necesita para funcionar correctamente, estos recursos pueden incluir bibliotecas externas, modulos de Angular, servicios personalizados, componentes y otros elementos que se utilizan en la aplicacion para realizar tareas especificas. Las dependencias de Angular se gestionan principalmente a travez del sistema de inyeccion de dependencias(DI), que es una caracteristica clave del framework
+
+> * Recursos Externos: Bibliotecas y reursos de terceros.
+> * Modulos de Angular: Unidades organizativas con funcionalidades
+> * Servicios personalizados: Funcionalidad compartida
+> * Inyeccion de Dependencias: Gestion automatica de instancias. 
+> * Inyeccion de Contructores: Dependencias pasadas atravez de contructores.
+> * Gestion de ciclo de vida: Control de creacion y destruccion.
+> * Testeabilidad: Facilita pruebas ubitarias y de integracion.
+> 
+## Diretivas
+
+>Son instrucciones en el marcado HTML que proporcionan funcionalidad adicional a los elementos DOM existentes o personalizan su comportamiento. Las directivas son un componente clave en la construccion de aplicaciones Web en Angular, ya que permiten extender y manipular el DOM de manera declarativa, lo que facilita la creacion de interfaces de usuario dinamicas e interactivas. Angular proporciona varias directivas incorporadas y tambien permiten la creacion de directivas personalizadas.
 
 ## Plantillas
-
-## Diretivas
 
 ## Enrutamiento
 
