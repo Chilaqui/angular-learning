@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-hijo',
@@ -7,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrl: './hijo.css'
 })
 export class Hijo {
+
+  // Propiedad para recibir el mensaje del componente padre
+  @Input() recibeHijo: string = '';
 
 }

@@ -18,6 +18,8 @@ export class Padre {
     this.valorContador--; 
  }
 
+ // Mensaje que se enviará al componente hijo
+ mensajePadre: string = 'Mensaje desde el componente Padre';
 
 
 }
