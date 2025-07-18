@@ -174,7 +174,84 @@ h1{
 > * Rirectiva: Define metadata de directivas personalizadas, como selectores.
 
 ## Comunicacion entre componentes
->Los  componenetes puden comunicarse a travez de las propiedades de entrada y salida. Un componente padre puede pasar datos a un componente hijo mediante la vinculacion de propiedades de entrada, y un componente hijo puede emitir eventos que el componente padre puede escuchar a travez de propiedades de salida
+> Los  componenetes puden comunicarse a travez de las propiedades de entrada y salida. Un componente padre puede pasar datos a un componente hijo mediante la vinculacion de propiedades de entrada, y un componente hijo puede emitir eventos que el componente padre puede escuchar a travez de propiedades de salida
+
+**Comunicacion Input**
+
+_*Compomponente de entrada hijo utilizando el decorador @Input()*_ 
+
+```typeScript
+//Componente hijo
+@Input() datoEntrada: string;
+```
+_*El componente padre, puede vincular datos a la propiedad de entrada del componente hijo utilizando la sintaxis del corchete [] en el marcado del templete*_
+
+```html
+<!--Componente padre-->
+<app-hijo [datoEntrada]='valorDesdePadre'></app-hijo>
+```
+*Cuando el valor de la propiedad en el componente padre cambia, Angular automaticamente actualiza la propiedad de entrada en el componente hijo, esto proporciona una forma eficiente y automaticamente de mantener sincronizados los datos entre componentes*
+
+```typeScript
+//Componente padre
+valorDesdePadre = "Hola, mundo";
+```
+*En el componente hijo puedes utilizar la propiedad de entrada (datoEntrada en este caso) como cualquier otra propiedad local. puedes mostrar en el templete, realizar logica basada en ese valor, etc.*
+
+```html
+<!--Componente hijo templete-->
+<p>{{datoEntrada}}</p>
+```
+**Comunicacion Output**
+
+*Se utiliza @Output y EventEmitter para lograr la comunicacion entre un componente hijo y su componente padre, declaras una propiedad con @Output en el componente hijo y emites eventos con EventEmitter*
+
+```typeScript
+//Componente hijo
+
+//Declaramos el evento
+@Output() messageEvent = new EventEmitter<string>();
+message: string = '';//El mesnaje vacio
+
+//Funcion que hace que mandemos el mensaje
+sendMenssage(){
+  this.messageEvent.emit(this.message);
+}
+```
+*Este archivo HTML contiene la interface de usuario del componente hijo. Incluye un input para que el usuario ingrese un mensaje y un boton para enviarlo, utiliza ngModel para vilcular el input con la propiedad message del componente TypeScript*
+
+```html
+<!--Componente hijo templete-->
+<div>
+  <label for="childInput" >Mensaje: </label>
+  <input id="childInput" [(ngModel)]="mesagge"/>
+  <button (click)="sendMessage()" >Enviar mensaje</button>
+</div>
+```
+
+*El archivo TypeScript define el componente ParentComponent, que tiene una propiedad (receivedMessage) para almacenar mensahes recibidos del componente hijo. Incluye un metodo (reciveMessage) que actualiza esta propiedad cuando se emite el evento desde el componente hijo*
+
+```javaScript
+//Componente padre
+
+//variable vacial del pare
+receivedMessage: string = '';
+
+//Actualiza lo que recibe el hijo y lo coloca en el mensaje vacio
+reciveMessage(mesagge: string){
+  this.receivedMessage = message;
+}
+```
+*La plantilla HTML del componente padre incluye el componente hijo (<app-child>) y utiliza el evento de salida messageEvent para llamr al metodo recivedMessage cuando se emite un mensaje desde el componente hijo. Muestra el mensaje recibido en la interfaz del componente padre*
+
+```html
+<!--Componente padre templete-->
+<div>
+  <app-child (messageEvent)="receivedMessage($event)"><app-child>
+  <p>Mensaje recibido en el padre: {{receivedMessage}}</p>
+</div>
+```
+
 
 ## Servicios
 

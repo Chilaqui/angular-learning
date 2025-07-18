@@ -8,8 +8,11 @@ import { Component } from '@angular/core';
 })
 export class Padre {
 
+  // Variable para recibir el mensaje del hijo
   reciboMensaje: string = '';
 
+  // Método que se ejecuta cuando el hijo emite un mensaje
+  // Se vincula al evento del hijo en el template
   recibirMensaje($event: string) {
     this.reciboMensaje = $event;
   }
