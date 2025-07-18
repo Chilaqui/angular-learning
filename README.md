@@ -399,6 +399,23 @@ Se ha creado un servicio centralizado (`ServicioFamiliar`) que gestiona el estad
 
 >Son instrucciones en el marcado HTML que proporcionan funcionalidad adicional a los elementos DOM existentes o personalizan su comportamiento. Las directivas son un componente clave en la construccion de aplicaciones Web en Angular, ya que permiten extender y manipular el DOM de manera declarativa, lo que facilita la creacion de interfaces de usuario dinamicas e interactivas. Angular proporciona varias directivas incorporadas y tambien permiten la creacion de directivas personalizadas.
 
+> * Intrucciones HTML: Extienden o personalizan elementos HTML.
+> * Directivas Incorporadas: Ofrecen funcionalidad preedefinida.
+> * Directivas Estructurales: Manipulan la estructura del DOM.
+> * Directivas de Atributo: Cambian atributos y propiedades.
+> * Directivas de eventos: Capturan y responden a eventos de usuario.
+> * Directivas Personalizadas: Creadas para necesidades especificas.
+> * Inyeccion de Dependencias: Acceso a servicios y datos.
+> * Flexibilidad de Aplicacion: Se pueden aplicar como atributos o elementos
+
+>Crear diretivas personalizadas
+
+```bash
+ng generate directive nombre-de-la-directiva
+
+ng g d nombre-de-la-directiva
+```
+
 ## Plantillas
 
 ## Enrutamiento
