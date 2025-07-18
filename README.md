@@ -156,6 +156,25 @@ h1{
 ## Enlaces de datos
 
 >Se refiere a la capacidad de conectar y sincronizar automaticamente los datos entre el modelo(que representa el estado de la aplicacion) y la vista (la interfaz de usuaurio que muestra esos datos) El enlace de datos es una caracteristica fundamental que permite que los cambios en el modelo se reflejen automaticamante en la vista y viceversa, sin necesidad de intervencion manual.
+> * Conexion Automaica: sincroniza datos entre el modelo y la vista 
+> * Unidireccional: Los cambios en el modelo se reflejan en la vista
+> * Bidireccional: CAmbios en la vista actualizan el modelo(Por eejemplo, formularios)
+> * Reactivo: Utiliza Observables para actualizaciones en el tiempo real
+> * Simplifica Interaccion: Facilita la creacion de las aplicaciones interactivas.
+> * Automatiza Actualizaciones: Cambios se reflejan sin intervencion manual.
+
+## Metadata
+
+> * Configuracion:Define como se comportan las partes de la aplicacion.
+> * Decoradores: Se utiliza con decoradores como @Component, @NgModule, @Injectable
+> * Personalizacion: Ajusta el comportamiento con propiedades clave.
+> * Componente: Metadata para componentes, incluye plantilla y estilos.
+> * Modulo: Configuracion de modulos, como declaraciones e importaciones
+> * Servicio: Metadata para servicios, define su alcance y proveedores.
+> * Rirectiva: Define metadata de directivas personalizadas, como selectores.
+
+## Comunicacion entre componentes
+>Los  componenetes puden comunicarse a travez de las propiedades de entrada y salida. Un componente padre puede pasar datos a un componente hijo mediante la vinculacion de propiedades de entrada, y un componente hijo puede emitir eventos que el componente padre puede escuchar a travez de propiedades de salida
 
 ## Servicios
 
@@ -167,7 +186,7 @@ h1{
 
 ## Enrutamiento
 
-## Metadata
+
 
 
 
