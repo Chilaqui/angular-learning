@@ -442,7 +442,66 @@ export class MiDirectiva {
   Este es un elemento con mi directiva personalizada.
 </div>
 ```
+- Ejemplo de una directiva
 
+```typeScript
+import { Directive, ElementRef } from '@angular/core';
+
+@Directive({
+  selector: '[appEstiloHermanosDirective]',
+  standalone: false
+})
+export class EstiloHermanosDirective {
+
+  //Este directive aplica un estilo a los elementos hermanos del elemento al que se aplica
+  constructor( private element: ElementRef) { 
+    this.element.nativeElement.style.backgroundColor = 'green';// Cambia el color de fondo a verde
+    this.element.nativeElement.style.color = 'blue';// Cambia el color del texto a azul
+    this.element.nativeElement.style.fontSize = '30px';// Cambia el tamaño de la fuente a 30px
+  }
+
+}
+```
+## Pipes
+
+>Son una caracteristica que permite formatear y ranformar datos en la vista de una aplicacion web de manera sencilla y legible. Los pipes son funciones que toman un valor de entrada (como una cadena de texto, un numero o un objeto) y lo procesan para proporcionar una representacion modificada o formateada en la interfaz de usuario. Los pipes se utilizan en las plantillas HTML de angular y se aplican utilizando el simbolo de barra certical ||. Alguno ejemplos comunes de uso de pipes incluyen el formato de fechas, numeros, monedas, texto en mayusculas o minusculas entre otros. Angular proporciona una serie de pipes integrados, com DatePipe, UpperCasePipe, LowerCasePipe, CurrencyPipe, DecimalPipe, ParcentPipe, entre otros. Ademas, tambien puedes crear tus propios pipes personalizados cuando necesites realizar transformaciones especificas.
+
+- Los pipes se generan asi:
+
+```bash
+
+ng generate pipe nombre-del-pipe
+
+ng g p nombre-del-pipe
+
+```
+- Como se ve un pipe:
+
+```typeScript
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'miPipePersonalizado',
+  standalone: false
+})
+export class MiPipePersonalizadoPipe implements PipeTransform {
+
+  //transform es el método que se ejecuta cuando se usa el pipe
+  //Recibe el valor que se le pasa al pipe y retorna el valor transformado
+  //En este caso, convierte el valor a mayúsculas
+  //Si el valor es undefined, retorna una cadena vacía
+  transform(valor: string | undefined): unknown {
+    return valor?.toUpperCase() || '';// Convertir a mayúsculas o retornar cadena vacía si es undefined
+  }
+
+}
+
+```
+- Como se aplica
+- 
+```html
+<p>{{texto | mipipe }}</p>
+```
 ## Plantillas
 
 ## Enrutamiento
