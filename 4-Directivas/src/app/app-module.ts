@@ -3,19 +3,19 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { MiDirectiva } from './mi-directiva';
 import { FormsModule } from '@angular/forms';
 import { Padre } from './padre/padre';
 import { Hijo } from './hijo/hijo';
 import { Hermano } from './hermano/hermano';
+import { EstiloHermanosDirective } from './estilo-hermanos-directive';
 
 @NgModule({
   declarations: [
     App,
-    MiDirectiva,
     Padre,
     Hijo,
-    Hermano
+    Hermano,
+    EstiloHermanosDirective,
   ],
   imports: [
     BrowserModule,
