@@ -498,13 +498,17 @@ export class MiPipePersonalizadoPipe implements PipeTransform {
 
 ```
 - Como se aplica
-- 
+  
 ```html
 <p>{{texto | mipipe }}</p>
 ```
+## Enrutamiento
+
+> * El enrutamiento en Angular se refiere a la capacidad de navegar entre diferentes componentes o vistas de una aplicacion web sin recargar la pagina completa. Permite crear aplicaciones de una solo pagina (SPA) donde los cambios en la URL desencadenan la carga de diferentes componentes, proporcionando asi una experiencia de usuario mas fluida y rapída.
+
 ## Plantillas
 
-## Enrutamiento
+
 
 
 
