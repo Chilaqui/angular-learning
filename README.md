@@ -506,6 +506,61 @@ export class MiPipePersonalizadoPipe implements PipeTransform {
 
 > * El enrutamiento en Angular se refiere a la capacidad de navegar entre diferentes componentes o vistas de una aplicacion web sin recargar la pagina completa. Permite crear aplicaciones de una solo pagina (SPA) donde los cambios en la URL desencadenan la carga de diferentes componentes, proporcionando asi una experiencia de usuario mas fluida y rapída.
 
+## Estructuras de control
+> Las estructuras de control son las herramientas que te permiten manipular el flujo de ejecucion en tu aplicacion.
+- (ngif) Permite mostrar u ocultar un elemento en funcion de una exprecion booleana
+```html
+<div *ngIf="mostrarElemento" >
+  Contenido visible si mostrarElemento es true
+</div>
+```
+-(ngFor) Utilizado para iterar sobre una lista y renderizar elementos repetitivos
+
+```html
+<div>
+  <li *ngFor="let item of listaItem" >
+    {{ item }}
+  </li>
+</div>
+```
+- (ngSwitch) Muestra un bloque de contenido segun el valor de una expresion
+
+```html
+<div [ngSwitch]="opcion">
+  <p *ngSwitchCase="opcion1">Contenido para opcion 1</p>
+  <p *ngSwitchCase="opcion2">Contenido para opcion 2</p>
+  <p *ngSwitchDefault>Contenido por defecto</p>
+</div>
+```
+
+- (ngClass) Permite cambiar dinamicamente las clases de un elemento.
+
+```html
+<div [ngClass]="{'clase1': condicion1, 'clase2': condicion2}">
+    <!--Contenido con clases dinamicas-->
+</div>
+```
+
+- (ngStyle) Permite cambiar dinamicamente los estilos de un elemento
+
+```html
+<div [ngStyle]="{'color' : color, 'font-size' : tamaño}">
+  <!--Contenido con los estilos dinamicos-->
+</div>
+```
+
+- (ngContainer) Es una estructura de control que no afecta al DOM. Se utiliza para agrupar elementos sin agregar nodos adicionales al arbol DOM
+
+```html
+<ng-container *ngIf="condition">
+  <!-- Contenido que no afecta al DOM directamente -->
+</ng-container>
+```
+
+- Otras esructuras (ngTemplate, ngPlural, ngComponentOutlet) hay que investigarlas
+
+
+
 ## Plantillas
 
 
