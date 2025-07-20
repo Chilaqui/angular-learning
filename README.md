@@ -505,6 +505,117 @@ export class MiPipePersonalizadoPipe implements PipeTransform {
 ## Enrutamiento
 
 > * El enrutamiento en Angular se refiere a la capacidad de navegar entre diferentes componentes o vistas de una aplicacion web sin recargar la pagina completa. Permite crear aplicaciones de una solo pagina (SPA) donde los cambios en la URL desencadenan la carga de diferentes componentes, proporcionando asi una experiencia de usuario mas fluida y rapída.
+> Se crean los componentes: (home, contact, products, products-details)
+> * se agregan a app-routing-module.ts (Especificamente a )
+
+```typeScript
+//Define las rutas de la aplicación
+const routes: Routes = [
+{path: 'home', component: Home},// Ruta para la página de inicio
+{path: 'products', component: Products},// Ruta para la página de productos
+{path: 'products/:category/:category2/:productId', component: ProductDetails},// Ruta para los detalles de un producto específico (Route Parameters)
+{path: 'contact', component: Contact}, // Ruta para la página de contacto
+{path: '**', redirectTo: '/home', pathMatch: 'full'} // Redirige cualquier ruta desconocida a la página de inicio
+];
+```
+- En Angular para poder agregar parametros de algo se los define en el html que en este caso de pone el var en la aplicacion principal que serie app.html
+  
+```html
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Hector Code</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup"> 
+      <div class="navbar-nav">
+        <!-- Aqui se crean las rutas que queremos manipular, tambien pudimos crear un componente para el nav -->
+        <a class="nav-link active" aria-current="page" routerLink="home">Home</a> 
+        <a class="nav-link active" routerLink="products">Products</a>
+        <a class="nav-link active" routerLink="contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>
+```
+> * Este caso para poder entrar a detalles de un producto tenemos que reedirigir el producto a product-details que esto se hace en el especificamente en el products con redireccion a component: ProductsDetails, lo cual los parapetros de RouterParameter
+
+
+
+```typeScript
+//Define las rutas de la aplicación
+const routes: Routes = [
+{path: 'home', component: Home},// Ruta para la página de inicio
+{path: 'products', component: Products},// Ruta para la página de productos
+{path: 'products/:category/:category2/:productId', component: ProductDetails},// Ruta para los detalles de un producto específico (Route Parameters)
+{path: 'contact', component: Contact}, // Ruta para la página de contacto
+{path: '**', redirectTo: '/home', pathMatch: 'full'} // Redirige cualquier ruta desconocida a la página de inicio
+];
+```
+
+> * Estos parametros son incializados en el poductsDetails y son 
+
+# 🔄 Lo que estás haciendo en `ProductDetails.ts`:
+
+```ts
+this._route.params.subscribe(params => {
+  this.producto = params['productId'];
+  this.color = params['category'];
+  this.col = params['category2'];
+})
+```
+
+✅ Aquí estás **inicializando las variables del componente** (`producto`, `color`, `col`) con los valores **que Angular extrae de la URL** al entrar a la ruta `products/:category/:category2/:productId`.
+
+## 🌐 ¿Cómo llegan esos valores?
+
+1. En tu página de productos (`products.component.html`), usas `[routerLink]` para navegar:
+
+```html
+<button [routerLink]="['/products','blue','white','Lavandina']">Detalle</button>
+```
+
+2. Angular convierte eso en esta URL:
+
+```
+/products/blue/white/Lavandina
+```
+
+3. Esa URL coincide con la ruta:
+
+```ts
+{ path: 'products/:category/:category2/:productId', component: ProductDetails }
+```
+
+4. Angular carga el componente `ProductDetails` y, dentro de él, `ActivatedRoute` extrae:
+
+```ts
+params['category'] = 'blue'
+params['category2'] = 'white'
+params['productId'] = 'Lavandina'
+```
+
+5. Tú igualas esos valores a las variables del componente:
+
+```ts
+this.color = 'blue';
+this.col = 'white';
+this.producto = 'Lavandina';
+```
+
+## 🖼 ¿Y en el HTML de `product-details.component.html`?
+
+Usas esas variables así:
+
+```html
+<p [ngStyle]="{'background-color' : color, 'color' : col}">
+  Este es el detalle de el producto: {{ producto }}
+</p>
+```
+
+✅ Solo estás **usando las variables que ya igualaste en el** `.ts` con los valores que llegaron por la URL.
 
 ## Estructuras de control
 > Las estructuras de control son las herramientas que te permiten manipular el flujo de ejecucion en tu aplicacion.
