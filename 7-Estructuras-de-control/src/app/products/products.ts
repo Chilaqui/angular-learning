@@ -9,6 +9,7 @@ import { productsList } from "../products/products.mock";
 })
 export class Products {
 
+  // productsList es una lista de productos que se importan desde un archivo mock
   productsList = productsList;
 
 

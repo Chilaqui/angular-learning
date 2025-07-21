@@ -672,7 +672,301 @@ Usas esas variables así:
 
 > * Creamos un mock para poder mostrar el bucle ngFor y mostrar los productos en iteracion (Mostrarlos de forma dinamica)
 
+```typeScript
+// products.mock.ts son datos de ejemplo para simular una lista de productos
+export const productsList: Products[] = [
+    {id: 1, name: 'Lavandina', price: 10, description: 'Botella de 1L de lavandina'},
+    {id: 2, name: 'Detergente', price: 5, description: 'Dura 120 lavados'},
+    {id: 3, name: 'Limpia Vidrios', price: 7, description: ' Tus vidrios brillarán como nuevos'},
+    {id: 4, name: 'Quita Grasa', price: 8 , description: 'Cocina limpia y sin grasa'},
+    {id: 5, name: 'Perfumina', price: 2, description: 'Olor a campo fresco todo el día'},
+];
 
+export interface Products{
+    id: number | string;
+    name: string;
+    price: number;
+    description: string;
+};
+```
+- Lo importamos a la ts principal
+
+```typeScript
+import { Component } from '@angular/core';
+import { productsList } from "../products/products.mock";
+
+@Component({
+  selector: 'app-products',
+  standalone: false,
+  templateUrl: './products.html',
+  styleUrl: './products.css'
+})
+export class Products {
+
+  // productsList es una lista de productos que se importan desde un archivo mock
+  productsList = productsList;
+}
+```
+- Modificamos el html de products ya que tenemos las variables en el .ts para poder importarlos
+```html
+<h1>Productos de Limpieza</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Producto</th>
+      <th scope="col">Precio</th>
+      <th scope="col">Detalle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of productsList">
+      <th scope="row">{{product.id}}</th>
+      <td>{{product.name | uppercase}}</td>
+      <td>{{product.price | currency}}</td>
+      <button type="button" class="btn btn-outline-primary" [routerLink]="['/products', product.name, product.price]">Detalle</button>
+    </tr>
+   
+  </tbody>
+</table>
+```
+- si queda pero para poder tarer por el id a un producto hay que modificar lo siguiente en productsDetails
+
+```typeScript
+
+//Comentamos lo anterior y ahora si podemos usar los valores que tiene elmock
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Products, productsList } from '../products/products.mock';
+
+@Component({
+  selector: 'app-product-details',
+  standalone: false,
+  templateUrl: './product-details.html',
+  styleUrl: './product-details.css'
+})
+export class ProductDetails implements OnInit{
+
+  // Inyecta ActivatedRoute para acceder a los parámetros de la ruta
+  constructor( private _route: ActivatedRoute) { }
+
+  /* producto: string = '';
+  color: string = '';
+  col: string = '';
+  price: number = 0; */
+
+  product?: Products;
+
+  productList: Products[] = productsList;
+
+  ngOnInit(): void {
+      this._route.params.subscribe(params =>{
+        /* this.producto = params['productId'];
+        this.color = params['category'];
+        this.col = params['category2'];
+        this.price = params['price']; */
+
+        this.product = this.productList.find(product => product.id == params['productId']);
+      })
+  }
+
+}
+```
+
+- Tambien hay que modificar el html y quedaria de esta forma para que tenga una mejor vista
+
+```html
+<p>Producto: {{product?.name}} </p>
+<p>Precio: {{product?.price | currency}}</p>
+<p>Descripción: {{product?.description}}</p>
+```
+
+- No olvidar borrar las rutas que teniamos por defecto aqui, por si tenemos algun tema en futuros proyectos
+
+```typeScript
+  import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { Home } from './home/home';
+import { Products } from './products/products';
+import { ProductDetails } from './product-details/product-details';
+import { Contact } from './contact/contact';
+
+//Define las rutas de la aplicación
+const routes: Routes = [
+{path: 'home', component: Home},// Ruta para la página de inicio
+{path: 'products', component: Products},// Ruta para la página de productos
+{path: 'products/:productId', component: ProductDetails},// Ruta para los detalles de un producto específico(VALORES BORRADOS DE COLOR O PRECIO)
+{path: 'contact', component: Contact}, // Ruta para la página de contacto
+{path: '**', redirectTo: '/home', pathMatch: 'full'} // Redirige cualquier ruta desconocida a la página de inicio
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+```
+- Tamnien podemos hacer que no aparesca un atributo modificando en el mock,(En este caso borrando descripcion) podemos decirle que si no hay descripcion que no la ponga, y es con esto
+
+```typeScript
+// products.mock.ts son datos de ejemplo para simular una lista de productos
+export const productsList: Products[] = [
+    {id: 1, name: 'Lavandina', price: 10, description: 'Botella de 1L de lavandina'},
+    {id: 2, name: 'Detergente', price: 5, description: 'Dura 120 lavados'},
+    {id: 3, name: 'Limpia Vidrios', price: 7, description: ' Tus vidrios brillarán como nuevos'},
+    {id: 4, name: 'Quita Grasa', price: 8 },//Eliminacion de descripcion
+    {id: 5, name: 'Perfumina', price: 2, description: 'Olor a campo fresco todo el día'},
+];
+
+export interface Products{
+    id: number | string;
+    name: string;
+    price: number;
+    description?: string;//Le ponemos el signo(?) para que pueda omitir si tiene o no
+};
+```
+- Despues en el html Usamos otra Estructura de control para hacer que no aparesca el texto (Descripcion:)
+
+```html
+<p>Producto: {{product?.name}} </p>
+<p>Precio: {{product?.price | currency}}</p>
+<!-- Aqui ponemos la estructura de control com el parametro product?.description y si la descripcion no tiene un valor o texto, simplemente no lo pone-->
+<p *ngIf="product?.description" >Descripción: {{product?.description}}</p>
+```
+- Ahora vamos a hacer un looding para que no cargue en tiempo real y tarde un segundo imedio y esto se hace en el product-details
+
+```typeScript
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Products, productsList } from '../products/products.mock';
+
+@Component({
+  selector: 'app-product-details',
+  standalone: false,
+  templateUrl: './product-details.html',
+  styleUrl: './product-details.css'
+})
+export class ProductDetails implements OnInit{
+
+  // Inyecta ActivatedRoute para acceder a los parámetros de la ruta
+  constructor( private _route: ActivatedRoute) { }
+
+
+  product?: Products;
+  loading: boolean = true;
+
+  productList: Products[] = productsList;
+
+  ngOnInit(): void {
+    // Simula un retraso para la carga de datos
+      setTimeout(() => {
+      // Obtiene el parámetro 'productId' de la ruta activa
+      // y busca el producto correspondiente en la lista de productos
+        this._route.params.subscribe(params =>{
+        this.product = this.productList.find(product => product.id == params['productId']);
+        this.loading = false;// Simula un retraso para la carga de datos
+      })
+      }, 1500);// Simula un retraso de 1.5 segundos
+  }
+
+}
+
+```
+
+- Y ahora en el html tenemos que contenerlo en un ng-container donde el loading este con un ngIf donde este en true no aparesca, al mismo tiempo otro ng-container donde aparesca un texto de carga, y cuando pase el segundo imedio se ponga en false, y paresca la informacion y desaparesca la otra
+
+```html
+<!--Muestra los detalles de un producto específico -->
+<ng-container *ngIf="!loading">
+    <p>Producto: {{product?.name}} </p>
+    <p>Precio: {{product?.price | currency}}</p>
+    <p *ngIf="product?.description" >Descripción: {{product?.description}}</p>
+</ng-container>
+
+<!-- Muestra un mensaje de carga mientras se obtienen los datos del producto -->
+<ng-container *ngIf="loading">
+    <p>Cargando producto...</p>
+</ng-container>
+
+```
+
+- Tambien en ngClass se ponen un parametro en este caso para los precios mayor a 5
+
+```html
+<h1>Productos de Limpieza</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Producto</th>
+      <th scope="col">Precio</th>
+      <th scope="col">Detalle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of productsList">
+      <th scope="row">{{product.id}}</th>
+      <td>{{product.name | uppercase}}</td>
+      <td [ngClass]="{'red-color': product.price > 5}">{{product.price | currency}}</td><!--Aqui ponesmos la calse con el nombre de la clase y una ciondicional para que se aplique-->
+      <button type="button" class="btn btn-outline-primary" [routerLink]="['/products', product.id]">Detalle</button>
+    </tr>
+   
+  </tbody>
+</table>
+
+```
+- Ahora viene el ngStyle que este se puede definir en una variable vacia en el product-details y darle logica, y solo pasar la variable en el html
+
+```typeScript
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Products, productsList } from '../products/products.mock';
+import { timeEnd } from 'console';
+
+@Component({
+  selector: 'app-product-details',
+  standalone: false,
+  templateUrl: './product-details.html',
+  styleUrls: ['./product-details.css']
+})
+export class ProductDetails implements OnInit{
+
+  constructor( private _route: ActivatedRoute) { }
+
+
+ 
+  product?: Products;
+  productList: Products[] = productsList;
+  loading: boolean = true;
+  color: string = 'blue'; //Definimos la variable vacia o con un color por defecto
+
+  
+    ngOnInit(): void {
+        this._route.params.subscribe(params =>{
+        this.product = this.productList.find(product => product.id == params['productId']);
+        this.color = this.product?.price as number > 5 ? 'red' : 'blue'; // Cambia el color según el precio(Aqui es donde la declaramos al precio)
+        this.loading = false;
+        
+      });
+    }
+
+}
+```
+- Y en el html solo la declaramos con ngStyle
+  
+```html
+<ng-container *ngIf="!loading" >
+    <h1>Producto: {{product?.name}} </h1>
+    <!-- Aqui solo declaramos con ngStyle-->
+    <h2 [ngStyle]="{'color': color}">Precio: {{product?.price | currency}}</h2>
+    <h3 *ngIf="product?.description" >Descripción: {{product?.description}}</h3>
+</ng-container>
+
+<ng-container *ngIf="loading" ><i style="color:blue">Cargando Informacion.......</i></ng-container>
+
+```
+## Formularios
 
 ## Plantillas
 

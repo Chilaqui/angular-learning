@@ -7,6 +7,7 @@ import { Home } from './home/home';
 import { Products } from './products/products';
 import { Contact } from './contact/contact';
 import { ProductDetails } from './product-details/product-details';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ProductDetails } from './product-details/product-details';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule, 
+    FormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
