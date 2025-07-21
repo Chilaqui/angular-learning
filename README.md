@@ -981,6 +981,82 @@ export class ProductDetails implements OnInit{
 > Los formularios reactivos de contruyen en el componente utilizando el servicio FormBuilder
 > Los controles se definen explicitamente y se vinculan al formulario.
 
+- Imporatacion de FormsModule y RaeactiveFormsModule
+```typeScript
+import { NgModule, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing-module';
+import { App } from './app';
+import { Home } from './home/home';
+import { Products } from './products/products';
+import { Contact } from './contact/contact';
+import { ProductDetails } from './product-details/product-details';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+@NgModule({
+  declarations: [
+    App,
+    Home,
+    Products,
+    Contact,
+    ProductDetails
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule, 
+    FormsModule,//Importacion para los formularios de tipo plantilla
+    ReactiveFormsModule// Importacion para los formularios de tipo reactivo
+  ],
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideZonelessChangeDetection(),
+    provideClientHydration(withEventReplay())
+  ],
+  bootstrap: [App]
+})
+export class AppModule { }
+
+```
+
+- En la paltilla de contanto podemos importar una de boostrap y empezar a modificar con el ngForm y agregando una funcion que se llame enviar, tabien le agregamos valores para que sean guardados en el .ts
+
+```html
+<div class="container">
+    <!-- Formulario de contacto -->
+     <!-- Este formulario utiliza ngModel para enlazar los datos del formulario con el modelo de datos -->
+    <form *myform="ngForm" (ngSubmit)="enviar()" >
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input type="email" class="form-control" id="name" aria-describedby="emailHelp" [([(ngModel)]="user.name")] required>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" [([(ngModel)]="user.email")] required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+```
+
+- Te puede dar error en la pagina enviando, entonces tenemos que ponerle este parametro:
+  
+```html
+<div class="container">
+    <form #myFormulario="ngForm" (ngSubmit)="enviar()" >
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input type="email" class="form-control" id="name"  [(ngModel)]="usuario.name" required [ngModelOptions]="{standalone: true}" ><!-- Con standalone deja de hacer el reclamo y nos deja seguir haciendo lo que estabams haciendo-->
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" [(ngModel)]="usuario.email" required [ngModelOptions]="{standalone: true}" >
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+```
+
 ## Plantillas
 
 
