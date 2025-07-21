@@ -20,6 +20,21 @@ export class Contact {
     })
   }
 
+  /**
+ * Verifica si un campo específico del formulario tiene un tipo determinado de error
+ * y si ya fue tocado por el usuario (para evitar mostrar errores desde el inicio).
+ * 
+ * @param controlName - El nombre del campo dentro del formulario (ej: 'email', 'nombre').
+ * @param errorType - El tipo de error que se quiere verificar (ej: 'required', 'email').
+ * @returns `true` si el campo tiene el error especificado y ya fue tocado, `false` en caso contrario.
+ */
+
+  hasErrors(controlName: string, errorType: string){
+    return this.formularioContanto.get(controlName)?.hasError(errorType) && this.formularioContanto.get(controlName)?.touched
+  }
+
+
+
   //From Reactive 
   enviar() {
     console.log(this.formularioContanto)

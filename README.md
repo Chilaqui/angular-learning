@@ -1114,6 +1114,84 @@ export class Contact {
 </div>
 
 ```
+- Para el manejo de errores se tiene que tener esto en el .ts ya que manejamos los errores que nos muestra por consola
+
+```typeScript
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact {
+
+ 
+  formularioContanto: FormGroup;
+
+  
+  constructor( private form: FormBuilder) {
+    this.formularioContanto = this.form.group({
+      nombre: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
+    })
+  }
+
+  /**
+ * Verifica si un campo específico del formulario tiene un tipo determinado de error
+ * y si ya fue tocado por el usuario (para evitar mostrar errores desde el inicio).
+ * 
+ * @param controlName - El nombre del campo dentro del formulario (ej: 'email', 'nombre').
+ * @param errorType - El tipo de error que se quiere verificar (ej: 'required', 'email').
+ * @returns `true` si el campo tiene el error especificado y ya fue tocado, `false` en caso contrario.
+ */
+
+  hasErrors(controlName: string, errorType: string){
+    return this.formularioContanto.get(controlName)?.hasError(errorType) && this.formularioContanto.get(controlName)?.touched
+  }
+
+
+
+
+  enviar() {
+    console.log(this.formularioContanto)
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+
+
+}
+
+
+```
+
+- Y en el HTML va de esta manera con el ngIf, creamos la funcion hasErrors con la direccion de formControlName 'nombre como primer parametro y el otro como el 'required' y que su otro del email sera required pero solo le ponemos 'email'
+
+```html
+<div class="container">
+  <form [formGroup]="formularioContanto" (ngSubmit)="enviar()">
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Name</label>
+      <input type="text" class="form-control" id="name" formControlName="nombre">
+      
+      <!-- ⚠️ Muestra este mensaje si el campo 'nombre' fue tocado y tiene el error 'required' -->
+      <div class="text-danger" *ngIf="hasErrors('nombre','required')">Campo Requerido</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" formControlName="email">
+      
+      <!-- ⚠️ Muestra este mensaje si el campo 'email' fue tocado y tiene el error de formato -->
+      <div class="text-danger" *ngIf="hasErrors('email','email')">Email inválido</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+```
 
 ## Plantillas
 
