@@ -14,12 +14,14 @@ export class ProductDetails implements OnInit{
   producto: string = '';
   color: string = '';
   col: string = '';
+  price: number = 0;
 
   ngOnInit(): void {
       this._route.params.subscribe(params =>{
         this.producto = params['productId'];
         this.color = params['category'];
         this.col = params['category2'];
+        this.price = params['price'];
       })
   }
 

@@ -9,7 +9,7 @@ import { Contact } from './contact/contact';
 const routes: Routes = [
 {path: 'home', component: Home},// Ruta para la página de inicio
 {path: 'products', component: Products},// Ruta para la página de productos
-{path: 'products/:category/:category2/:productId', component: ProductDetails},// Ruta para los detalles de un producto específico
+{path: 'products/:productId/:price', component: ProductDetails},// Ruta para los detalles de un producto específico
 {path: 'contact', component: Contact}, // Ruta para la página de contacto
 {path: '**', redirectTo: '/home', pathMatch: 'full'} // Redirige cualquier ruta desconocida a la página de inicio
 ];

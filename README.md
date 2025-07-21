@@ -670,6 +670,8 @@ Usas esas variables así:
 
 - Otras esructuras (ngTemplate, ngPlural, ngComponentOutlet) hay que investigarlas
 
+> * Creamos un mock para poder mostrar el bucle ngFor y mostrar los productos en iteracion (Mostrarlos de forma dinamica)
+
 
 
 ## Plantillas
