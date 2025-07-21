@@ -1057,6 +1057,64 @@ export class AppModule { }
 </div>
 ```
 
+- En los ReactiveFormsModule se tienen que crear diferentes metodos de declaracion en el contact.ts
+- Declaracion de formulario contacto con FormGroup
+- Inicializamos un contructor para inciar el formulario reactivo con FormBuilder
+- 
+```typeScript
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact {
+
+  //Decalaracion de un formulario reactivo con FormGroup (Sirve para agrupar controles)
+  formularioContanto: FormGroup;
+
+  //Reactive form inicializacion usa FormBuilder
+  constructor( private form: FormBuilder) {
+    this.formularioContanto = this.form.group({// crea un FormGroup que contiene varios FormControl Cada control (como nombre y email) se define como un array:['valor inicial', validaciones].
+      nombre: ['', Validators.required],//Campo requerido y va dentro de un array porque es un FormControl y puede tener validaciones
+      email: ['', [Validators.required, Validators.email]]//Campo requerido y con validacion de email es una array porque es un FormControl y puede tener validaciones
+    })
+  }
+
+  //From Reactive 
+  enviar() {
+    console.log(this.formularioContanto)
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+
+}
+
+```
+- Y en el HTML podemos modificar todos estos detalles de esta manera, cambia un poco al otro, pero es por que estamos integrando un formulario reactivo
+
+```html
+<div class="container">
+    <!-- Usamos Reactive Forms  con formGroup y declaramos la variable que creamos,la funcion de enviar sigue siendo igual -->
+    <form  [formGroup]="formularioContanto" (ngSubmit)="enviar()" >
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <!--Decalramos el FormControlName con el campo 'nombre'-->
+            <input type="email" class="form-control" id="name" formControlName="nombre" >
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <!--Declaramos el formControlName con el campo 'email'-->
+            <input type="email" class="form-control" id="email" formControlName="email" >
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+```
+
 ## Plantillas
 
 

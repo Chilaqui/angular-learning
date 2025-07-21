@@ -1,0 +1,16 @@
+<div class="container">
+    <!-- Usamos Reactive Forms  con formGroup y declaramos la variable que creamos,la funcion de enviar sigue siendo igual -->
+    <form  [formGroup]="formularioContanto" (ngSubmit)="enviar()" >
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <!--Decalramos el FormControlName con el campo 'nombre'-->
+            <input type="email" class="form-control" id="name" formControlName="nombre" >
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <!--Declaramos el formControlName con el campo 'email'-->
+            <input type="email" class="form-control" id="email" formControlName="email" >
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
