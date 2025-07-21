@@ -968,6 +968,19 @@ export class ProductDetails implements OnInit{
 ```
 ## Formularios
 
+> Son una parte esencial para interactuar con el usuario y recopilar datos. Hay dos tipos principales de formularios en angular: los basados en plantillas (template-driver) y los reactivos (reactive)
+
+- Imporat FormsModule para formularios de plantilla
+- Formularios basados en plantillas (Template-diver)
+> Los formularios basados en planatillas utilizan la sintaxis del template del HTML para contruir y validar formularios, La directiva ngForm e utiliza para crear un formulario y ngModel para enlazar datos vidireccionalmente.
+> Angular gestiona el estado y la validacion automaticamente.
+> Se utiliza la propiedad ngModel.Valid para verificar si un campo es valido
+> Para los formularios reactivos hay que importar ReactiveFormsModule
+
+- Formularios reactivos
+> Los formularios reactivos de contruyen en el componente utilizando el servicio FormBuilder
+> Los controles se definen explicitamente y se vinculan al formulario.
+
 ## Plantillas
 
 
