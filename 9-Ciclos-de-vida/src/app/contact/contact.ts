@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'; 
-// Importamos OnInit desde Angular para poder usar el ciclo de vida.
-// OnInit es una interfaz que nos permite ejecutar código automáticamente
-// justo después de que el componente ha sido inicializado por Angular.
+// Importamos OnInit y OnDestroy desde Angular.
+// OnInit se usa para ejecutar lógica al inicializar el componente.
+// OnDestroy se usa para limpiar recursos justo antes de que el componente sea destruido.
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'; 
 // Importamos clases necesarias para construir formularios reactivos.
@@ -13,11 +13,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './contact.css'
 })
 export class Contact implements OnInit, OnDestroy {
-  // Al implementar la interfaz OnInit, estamos obligados a definir el método ngOnInit().
+  // Implementamos las interfaces OnInit y OnDestroy para poder usar sus métodos respectivos:
+  // ngOnInit(): lógica después de crear el componente.
+  // ngOnDestroy(): lógica antes de destruir el componente.
 
-  formularioContanto: FormGroup; // Variable para manejar nuestro formulario reactivo
+  formularioContanto: FormGroup; // Variable para manejar nuestro formulario reactivo.
 
-  tipoDni: string = 'DNI'; // Variable usada para mostrar dinámicamente el tipo de documento
+  tipoDni: string = 'DNI'; // Variable usada para mostrar dinámicamente el tipo de documento.
 
   usuarioActivo: any = {
     nombre: 'Pedro',
@@ -26,9 +28,8 @@ export class Contact implements OnInit, OnDestroy {
   };
 
   constructor(private form: FormBuilder) {
-    // En el constructor inyectamos el servicio FormBuilder que nos ayuda a construir el formulario.
+    // Inyectamos FormBuilder para construir fácilmente nuestro formulario con validaciones.
 
-    // Aquí se inicializa el formulario con sus campos y validaciones.
     this.formularioContanto = this.form.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       apellido: ['', [Validators.required, Validators.minLength(3)]],
@@ -38,18 +39,24 @@ export class Contact implements OnInit, OnDestroy {
     });
   }
 
-  // Este método viene de la interfaz OnInit.
-  // Angular lo ejecuta automáticamente justo después de que el componente se ha creado y renderizado.
   ngOnInit(): void {
-    // Nos suscribimos a los cambios del campo 'tipoDni'.
-    // Cada vez que el usuario cambia la opción del select en el formulario,
-    // este bloque de código se ejecuta y actualiza la variable 'tipoDni'.
+    // Método del ciclo de vida que se ejecuta automáticamente después de crear el componente.
+
+    // Nos suscribimos a los cambios en el campo 'tipoDni' del formulario.
+    // Cada vez que el usuario cambia el valor del select, actualizamos la variable tipoDni.
     this.formularioContanto.get('tipoDni')?.valueChanges.subscribe(value => {
       this.tipoDni = value;
     });
   }
 
-  // Método de utilidad para mostrar errores en los campos solo si han sido tocados y tienen errores.
+  // Método que se ejecuta justo antes de que el componente sea destruido por Angular.
+  // Se usa típicamente para liberar recursos, cancelar suscripciones o limpiar intervalos.
+  ngOnDestroy(): void {
+    console.log("Se destruyó este componente");
+    // Aquí podrías cancelar la suscripción a valueChanges si la hubieras guardado como variable.
+  }
+
+  // Método de ayuda para mostrar errores solo cuando el campo ha sido tocado y contiene un error.
   hasErrors(controlName: string, errorType: string) {
     return this.formularioContanto.get(controlName)?.hasError(errorType) &&
            this.formularioContanto.get(controlName)?.touched;
@@ -60,11 +67,4 @@ export class Contact implements OnInit, OnDestroy {
     console.log(this.formularioContanto);
     alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
   }
-
-  ngOnDestroy(): void {
-      console.log("Se destrullo este componente")
-  }
-
-
-
 }
