@@ -1498,6 +1498,92 @@ export class Contact implements OnInit {
   </form>
 </div>
 
+```  
+
+## Ciclos de vida
+
+> El ciclo de vida de un componente se compone de una serie de eventos que ocurren desde la creacion hjasta la destruccion del componente
+
+> * ngOnChanges: Se dispara cuando los datos de entrada(@Input) del componente cambian.
+> * ngOnInit: Ocurre despues de que Angular ha inicializado todas las propiedades del componente 
+> * ngDoCheck: Se ejcuta durante cada deteccion de cambios y permite realizar acciones de verificacion personalizada
+> * ngAfterContentIntt: Ocurre despues de que Angular haya proyectado el contenido en el componente
+> * ngAfterContentChecked: Se ejecuta despues de que cada verificacion del contenido proyectado.
+> * ngAfterviewInit: Ocurre desoues de que Angular haya inicializado las cistas del componente.
+> * ngAfterViewChecked: Se ejecuta despues de cada verificacion de las vistas de el componente.
+> * ngOndestroy: Se dispara justo antes de que Angular destruya el componente.
+> Las mas importantes son: 
+> * ngOnChanges (Escucha todos los cambias que haga el padre)
+> * ngOnInit (Iniciar las suscripciones las variables, llamar a servicios)
+> * ngOndestroy (Eliminar de memoria todas las suscripciones o en el componente)
+
+- Ciclo de vida OnInit
+
+```typeScript
+import { Component, OnInit } from '@angular/core'; 
+// Importamos OnInit desde Angular para poder usar el ciclo de vida.
+// OnInit es una interfaz que nos permite ejecutar código automáticamente
+// justo después de que el componente ha sido inicializado por Angular.
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'; 
+// Importamos clases necesarias para construir formularios reactivos.
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact implements OnInit {
+  // Al implementar la interfaz OnInit, estamos obligados a definir el método ngOnInit().
+
+  formularioContanto: FormGroup; // Variable para manejar nuestro formulario reactivo
+
+  tipoDni: string = 'DNI'; // Variable usada para mostrar dinámicamente el tipo de documento
+
+  usuarioActivo: any = {
+    nombre: 'Pedro',
+    apellido: 'Perez',
+    dni: '123456',
+  };
+
+  constructor(private form: FormBuilder) {
+    // En el constructor inyectamos el servicio FormBuilder que nos ayuda a construir el formulario.
+
+    // Aquí se inicializa el formulario con sus campos y validaciones.
+    this.formularioContanto = this.form.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      apellido: ['', [Validators.required, Validators.minLength(3)]],
+      tipoDni: [''],
+      dni: [''],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  // Este método viene de la interfaz OnInit.
+  // Angular lo ejecuta automáticamente justo después de que el componente se ha creado y renderizado.
+  ngOnInit(): void {
+    // Nos suscribimos a los cambios del campo 'tipoDni'.
+    // Cada vez que el usuario cambia la opción del select en el formulario,
+    // este bloque de código se ejecuta y actualiza la variable 'tipoDni'.
+    this.formularioContanto.get('tipoDni')?.valueChanges.subscribe(value => {
+      this.tipoDni = value;
+    });
+  }
+
+  // Método de utilidad para mostrar errores en los campos solo si han sido tocados y tienen errores.
+  hasErrors(controlName: string, errorType: string) {
+    return this.formularioContanto.get(controlName)?.hasError(errorType) &&
+           this.formularioContanto.get(controlName)?.touched;
+  }
+
+  // Método que se ejecuta al enviar el formulario.
+  enviar() {
+    console.log(this.formularioContanto);
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+}
+
 
 ```  
 
