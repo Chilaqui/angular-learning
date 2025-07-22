@@ -1193,6 +1193,314 @@ export class Contact {
 
 ```
 
+- Para que los campos de pongan en color rojo y pongamos mas reqquired es de esa manera:
+  
+```html
+<div class="container">
+  <form [formGroup]="formularioContanto" (ngSubmit)="enviar()">
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Name</label>
+
+      <!-- Agregamos clase 'is-invalid' si el campo 'nombre' tiene error 'required' o 'minlength' -->
+      <input [ngClass]="{'is-invalid': hasErrors('nombre','required') || hasErrors('nombre','minlength')}"
+             type="text" class="form-control" id="name" formControlName="nombre">
+
+      <!-- Mostramos este mensaje si el campo 'nombre' fue tocado y tiene el error 'required' -->
+      <div class="text-danger" *ngIf="hasErrors('nombre','required')">Campo Requerido</div>
+
+      <!-- Mostramos este mensaje si el campo 'nombre' fue tocado y tiene el error 'minlength' -->
+      <div class="text-danger" *ngIf="hasErrors('nombre','minlength')">Nombre requiere mínimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Email</label>
+
+      <!-- Agregamos clase 'is-invalid' si el campo 'email' tiene error 'required' o 'email' -->
+      <input [ngClass]="{'is-invalid': hasErrors('email','required') || hasErrors('email','email')}"
+             type="email" class="form-control" id="email" formControlName="email">
+
+      <!-- Mostramos este mensaje si el campo 'email' fue tocado y tiene error de formato -->
+      <div class="text-danger" *ngIf="hasErrors('email','email')">Email inválido</div>
+
+      <!-- Mostramos este mensaje si el campo 'email' fue tocado y tiene el error 'required' -->
+      <div class="text-danger" *ngIf="hasErrors('email','required')">Email requerido</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+```
+- Y en el .ts tenemos que agregar este minLength para que pongamos que tiene otra validacion pero lo tenemos que encerrrar en una array[]
+  
+```typeScript
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact {
+
+  formularioContanto: FormGroup;
+
+  constructor(private form: FormBuilder) {
+    this.formularioContanto = this.form.group({
+      // Validamos que el nombre tenga al menos 3 caracteres con Validators.minLength(3)
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]]
+    })
+  }
+
+  hasErrors(controlName: string, errorType: string){
+    return this.formularioContanto.get(controlName)?.hasError(errorType)
+        && this.formularioContanto.get(controlName)?.touched;
+  }
+
+  enviar() {
+    console.log(this.formularioContanto)
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+}
+
+
+```
+
+- Creamos usuarios ya seteados, esto sirve si en algun momentos de el lado del back end ya nos manda los datos de el usuario y se hace primero simulando una lista de un usuario
+```typeScript
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact implements OnInit {
+
+  formularioContanto: FormGroup;
+
+  // Objeto con los datos del usuario activo que se precargarán en el formulario
+  usuarioActivo: any = {
+    nombre: 'Pedro',
+    apellido: 'Perez',
+    dni: '123456',
+  }
+
+  // Agregamos los nuevos campos (apellido y dni)
+  constructor(private form: FormBuilder) {
+    this.formularioContanto = this.form.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      apellido: ['', [Validators.required, Validators.minLength(3)]],
+      dni: [''],
+      email: ['', [Validators.required, Validators.email]]
+    })
+  }
+
+  hasErrors(controlName: string, errorType: string){
+    return this.formularioContanto.get(controlName)?.hasError(errorType) && this.formularioContanto.get(controlName)?.touched
+  }
+
+  enviar() {
+    console.log(this.formularioContanto)
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+
+  ngOnInit(): void {
+    // Agregamos validadores dinámicamente al campo 'dni' (obligatorio y máximo 3 caracteres)
+    this.formularioContanto.get('dni')?.setValidators([Validators.required, Validators.maxLength(3)]);
+
+    // Eliminamos los validadores del campo 'apellido' en tiempo de ejecución
+    this.formularioContanto.get('apellido')?.clearValidators();
+    this.formularioContanto.get('apellido')?.updateValueAndValidity(); // Aplicamos los cambios en las validaciones
+
+    // Cargamos los datos del usuario activo en los campos del formulario
+    this.formularioContanto.patchValue({
+      nombre: this.usuarioActivo.nombre,
+      dni: this.usuarioActivo.dni,
+    });
+
+    // Deshabilitamos los campos que no deben ser editables
+    this.formularioContanto.get('nombre')?.disable();
+    this.formularioContanto.get('dni')?.disable();
+  }
+}
+
+```
+- En el html tambien agregamos los nuevos campos
+  
+```html
+<div class="container">
+  <form [formGroup]="formularioContanto" (ngSubmit)="enviar()">
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Name</label>
+      <input [ngClass]="{'is-invalid': hasErrors('nombre','required') || hasErrors('nombre','minlength') }"
+             type="text" class="form-control" id="name" formControlName="nombre">
+      <div class="text-danger" *ngIf="hasErrors('nombre','required')">Campo Requerido</div>
+      <div class="text-danger" *ngIf="hasErrors('nombre','minlength')">Nombre requiere mínimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Apellido</label>
+      <!-- Validaciones para el campo 'apellido': requerido y mínimo de caracteres -->
+      <input [ngClass]="{'is-invalid': hasErrors('apellido','required') || hasErrors('apellido','minlength') }"
+             type="text" class="form-control" id="apellido" formControlName="apellido">
+      <div class="text-danger" *ngIf="hasErrors('apellido','required')">Campo Requerido</div>
+      <div class="text-danger" *ngIf="hasErrors('apellido','minlength')">Apellido requiere mínimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">DNI</label>
+      <!-- Validaciones para el campo 'dni': requerido y longitud mínima (asignadas dinámicamente en ngOnInit) -->
+      <input [ngClass]="{'is-invalid': hasErrors('dni','required') || hasErrors('dni','minlength') }"
+             type="text" class="form-control" id="dni" formControlName="dni">
+      <div class="text-danger" *ngIf="hasErrors('dni','required')">Campo Requerido</div>
+      <div class="text-danger" *ngIf="hasErrors('dni','minlength')">DNI requiere mínimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Email</label>
+      <input [ngClass]="{'is-invalid':hasErrors('email','required') || hasErrors('email','email') }"
+             type="email" class="form-control" id="email" formControlName="email">
+      <div class="text-danger" *ngIf="hasErrors('email','email')">Email inválido</div>
+      <div class="text-danger" *ngIf="hasErrors('email','required')">Email requerido</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+
+```
+
+- Suscripciones, estas nos sirve para varias cosas,pero de principio lo hacemos de esta manera en el codigo
+  
+```typeScript
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact implements OnInit {
+
+  formularioContanto: FormGroup;
+
+  // Variable que guarda el valor actual del campo 'tipoDni' del formulario
+  tipoDni: string = 'DNI';
+
+  usuarioActivo: any = {
+    nombre: 'Pedro',
+    apellido: 'Perez',
+    dni: '123456',
+  }
+
+  constructor(private form: FormBuilder) {
+    // Declaramos el campo 'tipoDni' dentro del formulario para poder escuchar sus cambios
+    this.formularioContanto = this.form.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      apellido: ['', [Validators.required, Validators.minLength(3)]],
+      tipoDni: [''], // Campo del cual nos suscribiremos a sus cambios
+      dni: [''],
+      email: ['', [Validators.required, Validators.email]]
+    })
+  }
+
+  hasErrors(controlName: string, errorType: string){
+    return this.formularioContanto.get(controlName)?.hasError(errorType)
+        && this.formularioContanto.get(controlName)?.touched
+  }
+
+  enviar() {
+    console.log(this.formularioContanto)
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+
+  ngOnInit(): void {
+    // Nos suscribimos al cambio de valor del campo 'tipoDni' para actualizar la variable tipoDni en tiempo real
+    this.formularioContanto.get('tipoDni')?.valueChanges.subscribe(value => {
+      this.tipoDni = value;
+    })
+  }
+
+}
+
+```  
+- Y en el HTML tambien modificamos esto: 
+
+```html
+<div class="container">
+  <form [formGroup]="formularioContanto" (ngSubmit)="enviar()">
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Name</label>
+      <input [ngClass]="{'is-invalid': hasErrors('nombre','required') || hasErrors('nombre','minlength') }"
+             type="text" class="form-control" id="name" formControlName="nombre">
+      <div class="text-danger" *ngIf="hasErrors('nombre','required')">Campo Requerido</div>
+      <div class="text-danger" *ngIf="hasErrors('nombre','minlength') ">Nombre requiere minimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Apellido</label>
+      <input [ngClass]="{'is-invalid': hasErrors('apellido','required') || hasErrors('apellido','minlength') }"
+             type="text" class="form-control" id="apellido" formControlName="apellido">
+      <div class="text-danger" *ngIf="hasErrors('apellido','required')">Campo Requerido</div>
+      <div class="text-danger" *ngIf="hasErrors('apellido','minlength') ">apellido requiere minimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Tipo de DNI</label>
+      <!-- 
+        Select que está enlazado al campo 'tipoDni' del formulario.
+        Cada vez que el usuario selecciona una opción, el valor se actualiza
+        y se refleja automáticamente en la variable tipoDni (gracias a la suscripción en ngOnInit).
+      -->
+      <select class="form-select" id="tipoDni" formControlName="tipoDni">
+        <option value="DNI">DNI</option>
+        <option value="Pasaporte">Pasaporte</option>
+        <option value="Cedula">Cédula</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <!-- 
+        El texto del label se actualiza dinámicamente con el valor seleccionado en el select anterior.
+        Es posible gracias a la interpolación con la variable tipoDni (vinculada por la suscripción).
+      -->
+      <label for="tipoDni" class="form-label">{{ tipoDni }}</label>
+      <input [ngClass]="{'is-invalid': hasErrors('dni','required') || hasErrors('dni','minlength') }"
+             type="text" class="form-control" id="dni" formControlName="dni">
+      <div class="text-danger" *ngIf="hasErrors('dni','required')">Campo Requerido</div>
+      <!-- 
+        El mensaje de error también se actualiza dinámicamente según el tipo de documento elegido
+        mostrando, por ejemplo: "Pasaporte requiere mínimo 3 caracteres"
+      -->
+      <div class="text-danger" *ngIf="hasErrors('dni','minlength') ">{{ tipoDni }} requiere mínimo 3 caracteres</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Email</label>
+      <input [ngClass]="{'is-invalid':hasErrors('email','required') || hasErrors('email','email')  }"
+             type="email" class="form-control" id="email" formControlName="email">
+      <div class="text-danger" *ngIf="hasErrors('email','email')">Email invalido</div>
+      <div class="text-danger" *ngIf="hasErrors('email','required')">Email requerido</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+
+```  
+
 ## Plantillas
 
 
