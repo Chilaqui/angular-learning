@@ -1586,6 +1586,195 @@ export class Contact implements OnInit {
 
 
 ```  
+- Tabien esta el ngDestroid que este puede destruir suscripciones que se le ponga en medio
+
+```typeScript
+import { Component, OnDestroy, OnInit } from '@angular/core'; 
+// Importamos OnInit y OnDestroy desde Angular.
+// OnInit se usa para ejecutar lógica al inicializar el componente.
+// OnDestroy se usa para limpiar recursos justo antes de que el componente sea destruido.
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'; 
+// Importamos clases necesarias para construir formularios reactivos.
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact implements OnInit, OnDestroy {
+  // Implementamos las interfaces OnInit y OnDestroy para poder usar sus métodos respectivos:
+  // ngOnInit(): lógica después de crear el componente.
+  // ngOnDestroy(): lógica antes de destruir el componente.
+
+  formularioContanto: FormGroup; // Variable para manejar nuestro formulario reactivo.
+
+  tipoDni: string = 'DNI'; // Variable usada para mostrar dinámicamente el tipo de documento.
+
+  usuarioActivo: any = {
+    nombre: 'Pedro',
+    apellido: 'Perez',
+    dni: '123456',
+  };
+
+  constructor(private form: FormBuilder) {
+    // Inyectamos FormBuilder para construir fácilmente nuestro formulario con validaciones.
+
+    this.formularioContanto = this.form.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      apellido: ['', [Validators.required, Validators.minLength(3)]],
+      tipoDni: [''],
+      dni: [''],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  ngOnInit(): void {
+    // Método del ciclo de vida que se ejecuta automáticamente después de crear el componente.
+
+    // Nos suscribimos a los cambios en el campo 'tipoDni' del formulario.
+    // Cada vez que el usuario cambia el valor del select, actualizamos la variable tipoDni.
+    this.formularioContanto.get('tipoDni')?.valueChanges.subscribe(value => {
+      this.tipoDni = value;
+    });
+  }
+
+  // Método que se ejecuta justo antes de que el componente sea destruido por Angular.
+  // Se usa típicamente para liberar recursos, cancelar suscripciones o limpiar intervalos.
+  ngOnDestroy(): void {
+    console.log("Se destruyó este componente");
+    // Aquí podrías cancelar la suscripción a valueChanges si la hubieras guardado como variable.
+  }
+
+  // Método de ayuda para mostrar errores solo cuando el campo ha sido tocado y contiene un error.
+  hasErrors(controlName: string, errorType: string) {
+    return this.formularioContanto.get(controlName)?.hasError(errorType) &&
+           this.formularioContanto.get(controlName)?.touched;
+  }
+
+  // Método que se ejecuta al enviar el formulario.
+  enviar() {
+    console.log(this.formularioContanto);
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+}
+
+```  
+
+- La carga de ngOnChanges (Cambiamos la logica de dni de contacto a un componente llamado DNI)
+  
+``` typeScript
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+// Importamos Input para recibir datos del componente padre.
+// Importamos OnChanges para detectar cambios en las propiedades con @Input().
+// Importamos SimpleChanges para acceder a los valores nuevos y anteriores del input.
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'; 
+
+@Component({
+  selector: 'dni-input',
+  standalone: false,
+  templateUrl: './dni.html',
+  styleUrl: './dni.css'
+})
+export class Dni implements OnChanges {
+  // Implementamos OnChanges para detectar cualquier cambio en inputs que reciba este componente.
+
+  FormularioDocumento: FormGroup;
+
+  @Input() tipoDni: string = 'DNI';
+  // Decorador @Input() indica que esta propiedad será recibida desde el componente padre.
+  // Esta variable cambiará dinámicamente desde el componente padre (Contact).
+
+  constructor(private form: FormBuilder) {
+    this.FormularioDocumento = this.form.group({
+      dni: [''],
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Este método se ejecuta automáticamente cada vez que cambia algún @Input().
+    // El parámetro 'changes' contiene los valores antiguos y nuevos de los inputs.
+    
+    console.log(changes?.['tipoDni'].currentValue);
+    // Imprimimos en consola el nuevo valor que recibió tipoDni desde el componente padre.
+  }
+
+  hasErrors(controlName: string, errorType: string) {
+    return this.FormularioDocumento.get(controlName)?.hasError(errorType) &&
+           this.FormularioDocumento.get(controlName)?.touched;
+  }
+}
+
+```  
+- Parte visual que reacciona a @Input
+
+```html
+<form [formGroup]="FormularioDocumento">
+    <!-- Aquí se muestra dinámicamente el valor que viene desde el componente padre (Contact)
+         gracias al @Input() tipoDni, el cual es monitoreado por ngOnChanges. -->
+    <label for="tipoDni" class="form-label">{{tipoDni}}</label>
+
+    <input [ngClass]="{'is-invalid': hasErrors('dni','required') || hasErrors('dni','minlength') }"
+        type="text" class="form-control" id="dni" formControlName="dni">
+        
+    <div class="text-danger" *ngIf="hasErrors('dni','required')">Campo Requerido</div>
+    <div class="text-danger" *ngIf="hasErrors('dni','minlength') ">
+        {{tipoDni}} requiere mínimo 3 caracteres
+    </div>
+</form>
+
+```
+- Parte de el contact para que se pueda mantener la logica de cambio  
+```typeScript
+  import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-contact',
+  standalone: false,
+  templateUrl: './contact.html',
+  styleUrl: './contact.css'
+})
+export class Contact implements OnInit, OnDestroy {
+  formularioContanto: FormGroup;
+
+  tipoDni: string = 'DNI'; // Esta propiedad será enviada al componente hijo mediante @Input()
+
+  constructor(private form: FormBuilder) {
+    this.formularioContanto = this.form.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      apellido: ['', [Validators.required, Validators.minLength(3)]],
+      tipoDni: [''],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  ngOnInit(): void {
+    // Escuchamos los cambios del select 'tipoDni' y actualizamos la variable
+    this.formularioContanto.get('tipoDni')?.valueChanges.subscribe(value => {
+      this.tipoDni = value;
+      // Al cambiar tipoDni, Angular detecta que es un @Input() en el hijo y llama ngOnChanges en Dni.
+    });
+  }
+
+  ngOnDestroy(): void {
+    console.log("Se destruyó este componente");
+  }
+
+  hasErrors(controlName: string, errorType: string) {
+    return this.formularioContanto.get(controlName)?.hasError(errorType) &&
+           this.formularioContanto.get(controlName)?.touched;
+  }
+
+  enviar() {
+    console.log(this.formularioContanto);
+    alert(`Gracias ${this.formularioContanto.value.nombre}, hemos recibido tu mensaje.`);
+  }
+}
+
+```
 
 ## Plantillas
 

@@ -26,13 +26,8 @@
                 <option value="Cedula">Cedula</option>
             </select>
         </div>
-        <div class="mb-3">
-            <label for="tipoDni" class="form-label">{{tipoDni}}</label>
-            <!--Decalramos el FormControlName con el campo 'nombre'-->
-            <input [ngClass]="{'is-invalid': hasErrors('dni','required') || hasErrors('dni','minlength') }" type="text"
-                class="form-control" id="dni" formControlName="dni">
-            <div class="text-danger" *ngIf="hasErrors('dni','required')">Campo Requerido</div>
-            <div class="text-danger" *ngIf="hasErrors('dni','minlength') ">{{tipoDni}} requiere minimo 3 caracteres</div>
+        <div class="mb-3" *ngIf="mostrarDni" >
+            <dni-input [tipoDni]="tipoDni" />
         </div>
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email</label>

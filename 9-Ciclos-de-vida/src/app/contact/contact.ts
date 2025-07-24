@@ -18,8 +18,8 @@ export class Contact implements OnInit, OnDestroy {
   // ngOnDestroy(): lógica antes de destruir el componente.
 
   formularioContanto: FormGroup; // Variable para manejar nuestro formulario reactivo.
-
   tipoDni: string = 'DNI'; // Variable usada para mostrar dinámicamente el tipo de documento.
+  mostrarDni: boolean = false;
 
   usuarioActivo: any = {
     nombre: 'Pedro',
@@ -34,7 +34,6 @@ export class Contact implements OnInit, OnDestroy {
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       apellido: ['', [Validators.required, Validators.minLength(3)]],
       tipoDni: [''],
-      dni: [''],
       email: ['', [Validators.required, Validators.email]]
     });
   }
@@ -46,6 +45,7 @@ export class Contact implements OnInit, OnDestroy {
     // Cada vez que el usuario cambia el valor del select, actualizamos la variable tipoDni.
     this.formularioContanto.get('tipoDni')?.valueChanges.subscribe(value => {
       this.tipoDni = value;
+      this.mostrarDni = value != '';
     });
   }
 
